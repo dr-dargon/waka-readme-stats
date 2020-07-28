@@ -85,11 +85,13 @@ def run_v3_api(query):
 
 
 def run_query(query):
-    request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
+    request = requests.post('https://api.github.com/graphql',
+                            json={'query': query}, headers=headers)
     if request.status_code == 200:
         return request.json()
     else:
-        raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, query))
+        raise Exception("Query failed to run by returning code of {}. {}".format(
+            request.status_code, query))
 
 
 def make_graph(percent: float):
@@ -129,7 +131,8 @@ def generate_commit_list(tz):
     id = result["data"]["viewer"]["id"]
     print("user {}".format(username))
 
-    result = run_query(createContributedRepoQuery.substitute(username=username))
+    result = run_query(
+        createContributedRepoQuery.substitute(username=username))
     nodes = result["data"]["user"]["repositoriesContributedTo"]["nodes"]
     repos = [d for d in nodes if d['isFork'] is False]
 
@@ -151,7 +154,8 @@ def generate_commit_list(tz):
     for repository in repos:
         if show_loc.lower() in ['true', '1', 't', 'y', 'yes']:
             try:
-                datas = run_v3_api(get_loc_url.substitute(owner=repository["owner"]["login"], repo=repository["name"]))
+                datas = run_v3_api(get_loc_url.substitute(
+                    owner=repository["owner"]["login"], repo=repository["name"]))
                 for data in datas:
                     total_loc = total_loc + data[1] - data[2]
             except Exception as e:
@@ -200,19 +204,30 @@ def generate_commit_list(tz):
     else:
         title = "I'm a night 🦉"
     one_day = [
-        {"name": "🌞 Morning", "text": str(morning) + " commits", "percent": round((morning / sumAll) * 100, 2)},
-        {"name": "🌆 Daytime", "text": str(daytime) + " commits", "percent": round((daytime / sumAll) * 100, 2)},
-        {"name": "🌃 Evening", "text": str(evening) + " commits", "percent": round((evening / sumAll) * 100, 2)},
-        {"name": "🌙 Night", "text": str(night) + " commits", "percent": round((night / sumAll) * 100, 2)},
+        {"name": "🌞 Morning", "text": str(
+            morning) + " commits", "percent": round((morning / sumAll) * 100, 2)},
+        {"name": "🌆 Daytime", "text": str(
+            daytime) + " commits", "percent": round((daytime / sumAll) * 100, 2)},
+        {"name": "🌃 Evening", "text": str(
+            evening) + " commits", "percent": round((evening / sumAll) * 100, 2)},
+        {"name": "🌙 Night", "text": str(
+            night) + " commits", "percent": round((night / sumAll) * 100, 2)},
     ]
     dayOfWeek = [
-        {"name": "Monday", "text": str(Monday) + " commits", "percent": round((Monday / sum_week) * 100, 2)},
-        {"name": "Tuesday", "text": str(Tuesday) + " commits", "percent": round((Tuesday / sum_week) * 100, 2)},
-        {"name": "Wednesday", "text": str(Wednesday) + " commits", "percent": round((Wednesday / sum_week) * 100, 2)},
-        {"name": "Thursday", "text": str(Thursday) + " commits", "percent": round((Thursday / sum_week) * 100, 2)},
-        {"name": "Friday", "text": str(Friday) + " commits", "percent": round((Friday / sum_week) * 100, 2)},
-        {"name": "Saturday", "text": str(Saturday) + " commits", "percent": round((Saturday / sum_week) * 100, 2)},
-        {"name": "Sunday", "text": str(Sunday) + " commits", "percent": round((Sunday / sum_week) * 100, 2)},
+        {"name": "Monday", "text": str(
+            Monday) + " commits", "percent": round((Monday / sum_week) * 100, 2)},
+        {"name": "Tuesday", "text": str(
+            Tuesday) + " commits", "percent": round((Tuesday / sum_week) * 100, 2)},
+        {"name": "Wednesday", "text": str(
+            Wednesday) + " commits", "percent": round((Wednesday / sum_week) * 100, 2)},
+        {"name": "Thursday", "text": str(
+            Thursday) + " commits", "percent": round((Thursday / sum_week) * 100, 2)},
+        {"name": "Friday", "text": str(
+            Friday) + " commits", "percent": round((Friday / sum_week) * 100, 2)},
+        {"name": "Saturday", "text": str(
+            Saturday) + " commits", "percent": round((Saturday / sum_week) * 100, 2)},
+        {"name": "Sunday", "text": str(
+            Sunday) + " commits", "percent": round((Sunday / sum_week) * 100, 2)},
     ]
 
     max_element = {
@@ -227,17 +242,20 @@ def generate_commit_list(tz):
         string = string + '![Lines of code](https://img.shields.io/badge/From%20Hello%20World%20I\'ve%20written-' + locale.format_string(
             "%d", total_loc,
             grouping=True) + '%20Lines%20of%20code-blue)\n\n'
-    string = string + '**' + title + '** \n\n' + '```text\n' + make_commit_list(one_day) + '\n\n```\n'
-    string = string + '📅 **' + days_title + '** \n\n' + '```text\n' + make_commit_list(dayOfWeek) + '\n\n```\n'
+    string = string + '**' + title + '** \n\n' + \
+        '```text\n' + make_commit_list(one_day) + '\n\n```\n'
+    string = string + '📅 **' + days_title + '** \n\n' + \
+        '```text\n' + make_commit_list(dayOfWeek) + '\n\n```\n'
 
     return string
 
 
 def get_stats():
     '''Gets API data and returns markdown progress'''
-    stats = this_week()+'\n'
+    stats = '```text\n'+this_week()+'\n'
 
-    request = requests.get(f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}")
+    request = requests.get(
+        f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}")
 
     if request.status_code != 401:
         data = request.json()
@@ -265,9 +283,11 @@ def get_stats():
 
         stats = stats + '```\n\n'
     else:
-        print("Error With WAKA time API returned " + str(request.status_code) + " Response " + str(request.json()))
+        print("Error With WAKA time API returned " +
+              str(request.status_code) + " Response " + str(request.json()))
 
     return stats
+
 
 def this_week() -> str:
     '''Returns a week streak'''
@@ -275,6 +295,7 @@ def this_week() -> str:
     week_start = week_end - datetime.timedelta(days=7)
     print("Week header created")
     return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
+
 
 def decode_readme(data: str):
     '''Decode the contets of old readme'''
