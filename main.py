@@ -252,7 +252,7 @@ def generate_commit_list(tz):
 
 def get_stats():
     '''Gets API data and returns markdown progress'''
-    stats = '```text\n'+this_week()+'\n'
+    stats = '```text\n'+this_week()+'\n\n'
 
     request = requests.get(
         f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}")
