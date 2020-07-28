@@ -243,32 +243,21 @@ def get_stats():
         data = request.json()
         if showCommit.lower() in ['true', '1', 't', 'y', 'yes']:
             stats = stats + generate_commit_list(tz=data['data']['timezone']) + '\n\n'
-        stats = stats + '📊 **This week I spent my time on** \n\n'
         stats = stats + '```text\n'
-        if showTimeZone.lower() in ['true', '1', 't', 'y', 'yes']:
-            timezone = data['data']['timezone']
-            stats = stats + '⌚︎ Timezone: ' + timezone + '\n\n'
 
         if showLanguage.lower() in ['true', '1', 't', 'y', 'yes']:
             if len(data['data']['languages']) != 0:
                 lang_list = make_list(data['data']['languages'])
             else:
                 lang_list = "No Activity tracked this Week"
-            stats = stats + '💬 Languages: \n' + lang_list + '\n\n'
+            stats = stats + '💬 编程语言: \n' + lang_list + '\n\n'
 
         if showEditors.lower() in ['true', '1', 't', 'y', 'yes']:
             if len(data['data']['editors']) != 0:
                 edit_list = make_list(data['data']['editors'])
             else:
                 edit_list = "No Activity tracked this Week"
-            stats = stats + '🔥 Editors: \n' + edit_list + '\n\n'
-
-        if showProjects.lower() in ['true', '1', 't', 'y', 'yes']:
-            if len(data['data']['projects']) != 0:
-                project_list = make_list(data['data']['projects'])
-            else:
-                project_list = "No Activity tracked this Week"
-            stats = stats + '🐱‍💻 Projects: \n' + project_list + '\n\n'
+            stats = stats + '🔥 常用编辑器: \n' + edit_list + '\n\n'
 
         if showOs.lower() in ['true', '1', 't', 'y', 'yes']:
             if len(data['data']['operating_systems']) != 0:
