@@ -235,15 +235,12 @@ def generate_commit_list(tz):
 
 def get_stats():
     '''Gets API data and returns markdown progress'''
-    stats = ''
+    stats = this_week()+'\n'
 
     request = requests.get(f"https://wakatime.com/api/v1/users/current/stats/last_7_days?api_key={waka_key}")
 
     if request.status_code != 401:
         data = request.json()
-        if showCommit.lower() in ['true', '1', 't', 'y', 'yes']:
-            stats = stats + generate_commit_list(tz=data['data']['timezone']) + '\n\n'
-        stats = stats + '```text\n'
 
         if showLanguage.lower() in ['true', '1', 't', 'y', 'yes']:
             if len(data['data']['languages']) != 0:
@@ -264,7 +261,7 @@ def get_stats():
                 os_list = make_list(data['data']['operating_systems'])
             else:
                 os_list = "No Activity tracked this Week"
-            stats = stats + '💻 Operating Systems: \n' + os_list + '\n\n'
+            stats = stats + '💻 操作系统: \n' + os_list + '\n\n'
 
         stats = stats + '```\n\n'
     else:
@@ -272,6 +269,12 @@ def get_stats():
 
     return stats
 
+def this_week() -> str:
+    '''Returns a week streak'''
+    week_end = datetime.datetime.today() - datetime.timedelta(days=1)
+    week_start = week_end - datetime.timedelta(days=7)
+    print("Week header created")
+    return f"Week: {week_start.strftime('%d %B, %Y')} - {week_end.strftime('%d %B, %Y')}"
 
 def decode_readme(data: str):
     '''Decode the contets of old readme'''
